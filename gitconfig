@@ -1,0 +1,20 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Fanien Louis
+	email = louis@fewlines.co
+# Please adapt and uncomment the following lines:
+#	name = Louis Fanien
+#	email = louisfanien@MBP-de-Louis.fewlines.local
+[core]
+	editor = code --wait
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[pager]
+	branch = false
+[alias]
+  undo = reset --soft HEAD^
+[init]
+	defaultBranch = main
