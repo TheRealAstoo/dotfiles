@@ -5,11 +5,11 @@ install brew [you can find the cmmand here](https://brew.sh/)
 download the repo(s) as zip
 
 ```shell
-brew bundle --file ~/Downloads/dotfiles/Brewfile
+brew bundle --file ~/Downloads/dotfiles-main/Brewfile
 ```
 
 ```shell
-rcup -d ~/Downloads/dotfiles
+rcup -d ~/Downloads/dotfiles-main
 ```
 
 ```shell
@@ -29,5 +29,5 @@ rcup
 ```
 
 ```shell
-rm -rf ~/Downloads/dotfiles
+rm -rf ~/Downloads/dotfiles-main
 ```
