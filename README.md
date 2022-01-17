@@ -31,3 +31,5 @@ rcup
 ```shell
 rm -rf ~/Downloads/dotfiles-main
 ```
+
+Install oh-my-zsh (currently, they are not on brew), go to [this URL](https://github.com/ohmyzsh/ohmyzsh)
