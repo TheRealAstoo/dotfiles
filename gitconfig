@@ -1,10 +1,6 @@
-# This is Git's per-user configuration file.
 [user]
 	name = Fanien Louis
 	email = louis@fewlines.co
-# Please adapt and uncomment the following lines:
-#	name = Louis Fanien
-#	email = louisfanien@MBP-de-Louis.fewlines.local
 [core]
 	editor = code --wait
 [filter "lfs"]
