@@ -27,6 +27,10 @@ cask "postman"
 cask "slack"
 cask "tableplus"
 cask "visual-studio-code"
+cask "spotify"
+cask "zoom"
+cask "firefox"
+cask "obsidian"
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
 mas "QuickShade", id: 931571202

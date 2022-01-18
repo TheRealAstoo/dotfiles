@@ -16,5 +16,6 @@
 	branch = false
 [alias]
   undo = reset --soft HEAD^
+  gst = git status
 [init]
 	defaultBranch = main
