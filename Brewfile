@@ -18,6 +18,7 @@ brew "yarn"
 brew "earthly/earthly/earthly"
 brew "fewlines-education/tap/sparta-cli", link: false
 brew "thoughtbot/formulae/rcm"
+brew "tldr"
 cask "1password"
 cask "clickup"
 cask "docker"
