@@ -12,9 +12,9 @@ brew bundle --file ~/Downloads/dotfiles-main/Brewfile
 rcup -d ~/Downloads/dotfiles-main
 ```
 
-```shell
+<!-- ```shell
 source ~/.zshrc
-```
+``` -->
 
 ```shell
 brew bundle
@@ -32,4 +32,4 @@ rcup
 rm -rf ~/Downloads/dotfiles-main
 ```
 
-Install oh-my-zsh (currently, they are not on brew), go to [this URL](https://github.com/ohmyzsh/ohmyzsh)
+<!-- Install oh-my-zsh (currently, they are not on brew), go to [this URL](https://github.com/ohmyzsh/ohmyzsh) -->

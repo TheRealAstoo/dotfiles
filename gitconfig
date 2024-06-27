@@ -12,6 +12,8 @@
 	branch = false
 [alias]
   undo = reset --soft HEAD^
-  gst = git status
+	current = !git branch | awk '/^* (.*)/ { print $2 }' | sed /^$/d
+	pr = !open "https://github.com/$(git remote get-url origin | sed -e 's/.*://g' -e 's/\\.git$//' | head -n 1)/compare/$(git current | sed 's/#/%23/g')?expand=1"
+	gcpo = "!f() { git checkout \"$1\" && git pull origin \"$1\" && yarn; }; f"
 [init]
 	defaultBranch = main
