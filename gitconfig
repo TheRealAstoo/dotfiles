@@ -1,8 +1,9 @@
 [user]
 	name = Fanien Louis
-	email = louis@fewlines.co
+	email = louis.fanien@gmail.com
 [core]
 	editor = code --wait
+	sshCommand = "ssh -i ~/.ssh/id_ed25519"
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
