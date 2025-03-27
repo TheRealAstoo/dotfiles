@@ -22,3 +22,5 @@ alias uuid='uuidgen | tr -d '\''\n'\'' | pbcopy' uuid
 
 # Add asdf
 . $HOME/.asdf/asdf.sh
+
+source ~/.dotfiles/.secrets
