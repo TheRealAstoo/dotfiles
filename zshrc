@@ -21,6 +21,7 @@ alias uuid='uuidgen | tr -d '\''\n'\'' | pbcopy' uuid
 # alias gcpo = '!f() { git checkout \"$1\" && git pull origin \"$1\"; }; f'
 
 # Add asdf
-. $HOME/.asdf/asdf.sh
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
-source ~/.dotfiles/.secrets
+[ -f ~/.dotfiles/.secrets ] && source ~/.dotfiles/.secrets
+export PATH="$HOME/.local/bin:$PATH"

@@ -1,6 +1,9 @@
 [user]
-	name = Fanien Louis
-	email = louis.fanien@gmail.com
+	name = Louis Fanien
+[includeIf "gitdir:~/Workspace/Perso/"]
+    path = ~/.gitconfig
+[includeIf "gitdir:~/Workspace/Work/"]
+    path = ~/.gitconfig
 [core]
 	editor = code --wait
 	sshCommand = "ssh -i ~/.ssh/id_ed25519"
@@ -12,9 +15,15 @@
 [pager]
 	branch = false
 [alias]
-  undo = reset --soft HEAD^
+	undo = reset --soft HEAD^
 	current = !git branch | awk '/^* (.*)/ { print $2 }' | sed /^$/d
 	pr = !open "https://github.com/$(git remote get-url origin | sed -e 's/.*://g' -e 's/\\.git$//' | head -n 1)/compare/$(git current | sed 's/#/%23/g')?expand=1"
 	gcpo = "!f() { git checkout \"$1\" && git pull origin \"$1\" && yarn; }; f"
 [init]
 	defaultBranch = main
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+[commit]
+	gpgsign = true
