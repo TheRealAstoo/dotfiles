@@ -1,6 +1,6 @@
 [user]
 	name = Louis Fanien
-    email = louis.fanien@gmail.com
+    email = louis.fanien.pro@gmail.com
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIESdu3YiJGFbJj84kKJIymwPnpWiZ2YODnG/3XjEJhVs
 [includeIf "gitdir:~/Workspace/Work/"]
     path = ~/.gitconfig
