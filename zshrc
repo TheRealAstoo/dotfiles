@@ -25,3 +25,6 @@ export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 [ -f ~/.dotfiles/.secrets ] && source ~/.dotfiles/.secrets
 export PATH="$HOME/.local/bin:$PATH"
+
+# add 1Password SSH agent socket
+export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
