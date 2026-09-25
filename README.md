@@ -36,8 +36,8 @@ brew --version
 
 ## 3. Clone the dotfiles
 
-Your `~/.ssh/config` (which points SSH at the 1Password agent) isn't in place yet,
-so point SSH at the agent socket for this first clone:
+The line that routes SSH to the 1Password agent lives in the repo's `zshrc` and
+isn't active yet, so point SSH at the agent socket for this first clone:
 
 ```shell
 export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
@@ -46,8 +46,8 @@ git clone git@github.com:TheRealAstoo/dotfiles.git ~/.dotfiles
 ```
 
 > Keep this same terminal open for the next steps so `SSH_AUTH_SOCK` stays set.
-> Once your dotfiles are linked (step 5), your shell/SSH config sets this
-> permanently and you won't need the export again.
+> Once your dotfiles are linked and the shell reloaded (steps 5 & 7), the `zshrc`
+> exports this permanently and you won't need to do it by hand again.
 
 ## 4. Install everything from the Brewfile
 
@@ -63,23 +63,35 @@ This installs `rcm`, `asdf`, VS Code and everything else.
 rcup
 ```
 
-Your Git name and settings come from the repo's `gitconfig` (symlinked here). Your
-per-identity email and signing key are set up in the next section.
+Your Git name, personal email and signing key come from the repo's `gitconfig`
+(symlinked here). A separate **work** identity is set up in step 8.
 
 > If `rcup` conflicts with a file that already exists — typically `~/.zprofile`,
 > which Homebrew writes during install — back it up and re-run with `rcup -f`.
 
 ## 6. Install the language runtimes (asdf)
 
-`asdf` reads `~/.tool-versions` (symlinked in the previous step):
+Add the plugins for the tools your `~/.tool-versions` pins, then install. asdf
+only knows a language once its plugin is added — without them `asdf install` does
+nothing (no output, no error):
 
 ```shell
 asdf plugin add nodejs
 asdf plugin add yarn
-asdf install
-asdf list nodejs
+asdf install            # reads ~/.tool-versions (symlinked in the previous step)
+asdf list nodejs        # verify
 node --version && yarn --version
 ```
+
+The `nodejs` plugin uses `gpg` (in the Brewfile) to verify Node's signatures and
+imports the release-team keys automatically. If it ever stalls on a key, install
+once with `NODEJS_CHECK_SIGNATURES=no asdf install`.
+
+> `~/.tool-versions` must pin a **full** version (e.g. `nodejs 24.15.0`), not a
+> shorthand like `nodejs 24` — `node-build` doesn't resolve those and fails with
+> `definition not found`. Run `asdf plugin update nodejs`, then `asdf latest
+> nodejs 24` to get the exact latest patch, and pin that. Node 24 is the current
+> Active LTS.
 
 ## 7. Reload your shell
 
@@ -91,31 +103,31 @@ exec zsh
 
 ## 8. Set up your Git identities (perso / work)
 
-The committed `gitconfig` signs commits with SSH and routes your **email +
-signing key** by folder with `includeIf`:
+The committed `gitconfig` uses your **personal** identity by default and signs
+commits with SSH. It switches to a **work** identity only for repos under
+`~/Workspace/Work/`, via `includeIf`:
 
 ```
 # already in the repo's gitconfig
-[includeIf "gitdir:~/Workspace/Perso/"]
-    path = ~/Workspace/Perso/.gitconfig
+[user]
+    name = Louis Fanien
+    email = louis.fanien.pro@gmail.com
+    signingkey = ssh-ed25519 AAAA...        # personal key (public) from 1Password
+
 [includeIf "gitdir:~/Workspace/Work/"]
-    path = ~/Workspace/Work/.gitconfig
+    path = ~/Workspace/Work/.gitconfig      # overrides email + signingkey for work
 ```
 
-So any repo you clone under `~/Workspace/Perso/` or `~/Workspace/Work/` picks up
-the matching identity automatically. Create the two local files — they're
-machine-local and not committed, so your work email stays out of the public repo.
-Get each **public** signing key from 1Password (open the SSH key item → copy the
-public key):
+Because the personal identity is the global default, **every** repo signs
+correctly out of the box — including `~/.dotfiles` itself and anything outside
+`~/Workspace/`. Only repos cloned under `~/Workspace/Work/` switch identity.
+
+Create the local work file — it's machine-local and not committed, so your work
+email stays out of the public repo. Get the **public** signing key from 1Password
+(open the SSH key item → copy the public key):
 
 ```shell
-mkdir -p ~/Workspace/Perso ~/Workspace/Work
-
-cat > ~/Workspace/Perso/.gitconfig <<'CFG'
-[user]
-    email = louis.fanien@gmail.com
-    signingkey = ssh-ed25519 AAAA...   # personal key (public) from 1Password
-CFG
+mkdir -p ~/Workspace/Work
 
 cat > ~/Workspace/Work/.gitconfig <<'CFG'
 [user]
@@ -124,9 +136,27 @@ cat > ~/Workspace/Work/.gitconfig <<'CFG'
 CFG
 ```
 
-Add each **public** key to the matching GitHub/GitLab account as a **Signing**
-key (separate from the Authentication key), then clone your projects under the
-right folder (e.g. `~/Workspace/Work/<repo>`).
+Add each **public** key to the matching account as a **Signing** key (separate
+from the Authentication key), then clone work projects under `~/Workspace/Work/`.
+
+## 9. Install Claude Code
+
+Installed via the native installer (self-contained — no Node.js needed — and it
+auto-updates in the background), so it stays out of the Brewfile:
+
+```shell
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+Then sign in and check the install:
+
+```shell
+claude          # log in via the browser — needs a Pro/Max/Team/Enterprise/Console plan or API key
+claude doctor   # verifies install type and PATH
+```
+
+> The binary lands in `~/.local/bin`. If `claude: command not found`, make sure
+> `~/.local/bin` is on your `PATH` (or reopen the terminal).
 
 ## Restoring your secrets (optional)
 
@@ -145,14 +175,16 @@ touch ~/.dotfiles/.secrets
 
 - **SSH via 1Password:** Git authenticates through the 1Password agent, so the
   repo's `gitconfig` does **not** pin an on-disk key in `core.sshCommand` (no
-  `-i ~/.ssh/id_ed25519`) — the agent provides the key. The persistent setting
-  lives in `~/.ssh/config` as
-  `IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"`.
+  `-i ~/.ssh/id_ed25519`) — the agent provides the key. Routing to the agent is
+  done by an `export SSH_AUTH_SOCK=".../agent.sock"` line in the repo's `zshrc`
+  (active after steps 5 & 7). An `IdentityAgent` line in `~/.ssh/config` does the
+  same and also covers GUI Git clients, if you prefer that.
 - **Commit signing:** the `gitconfig` signs commits through 1Password
   (`gpg.format = ssh`, `gpg.ssh.program = .../op-ssh-sign`, `commit.gpgsign =
-  true`). The per-identity `signingkey` lives in each `~/Workspace/*/.gitconfig`
-  (step 8). Toggle globally with `git config --global commit.gpgsign false`, or
-  per-commit with `git commit --no-gpg-sign`.
+  true`). The personal `signingkey` is the global default; the work override lives
+  in `~/Workspace/Work/.gitconfig` (step 8). Toggle globally with
+  `git config --global commit.gpgsign false`, or per-commit with
+  `git commit --no-gpg-sign`.
 - **asdf shell setup:** the shell config puts asdf's shims on the `PATH`
   (`export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"`). Recent asdf (Go
   rewrite, 0.16+) no longer ships an `asdf.sh` to source.
